@@ -9,6 +9,7 @@ import android.widget.TableRow;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Initialize game and create a grid with the ID's of the buttons as they are in the UI
     Game game;
     int [][] ids = {
             {R.id.button, R.id.button2, R.id.button3},
@@ -20,13 +21,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Start new game
         game = new Game();
 
+        // Check if an instance state was saved, If so, restore tilestates
         if (savedInstanceState != null) {
             game = (Game) savedInstanceState.getSerializable("game");
+
+            // Iterate over the buttons using the grid of button ID's, and get their tilestates
             for (int i =0; i < 3; i++){
                 for (int j = 0; j < 3; j++){
                     Button button = (Button) findViewById(ids[i][j]);
+
+                    // Set text of buttons according to tilestates
                     TileState oldstate = game.saved(i,j);
                     switch (oldstate) {
                         case CROSS:
@@ -42,13 +50,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tileClicked(View view) {
+
+        // When a button is clicked, save the button's X and Y coordinates
         Button button = (Button) view;
         float xpos = button.getX();
         float ypos = button.getY();
 
+        // Translate coordinates to row and column position
         int row = (int) (xpos / 200);
         int column = (int) (ypos / 200);
 
+        // Get new tilestate and change the buttons text accordingly
         TileState state = game.choose(row, column);
         switch (state) {
             case CROSS:
@@ -61,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+        // Check the state of the game and change the progress text button accordingly
         GameState gState = game.won();
         Button button11 = (Button) findViewById(R.id.button11);
         switch (gState){
@@ -87,13 +100,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // Save the game's state
         outState.putSerializable("game",game);
     }
 
-
     public void resetClicked(View view) {
+
+        // Start new game
         game = new Game();
 
+        // Set all the buttons text fields to blank
         Button button1 = findViewById(R.id.button);
         button1.setText("");
         Button button2 = findViewById(R.id.button2);
